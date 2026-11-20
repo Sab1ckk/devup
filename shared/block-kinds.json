@@ -1,0 +1,210 @@
+[
+  {
+    "code": "hero",
+    "title": "Главная",
+    "icon": "home",
+    "hint": "Первый экран, заголовок, основная идея.",
+    "unique": true,
+    "group": "Страницы"
+  },
+  {
+    "code": "about",
+    "title": "О проекте",
+    "icon": "info",
+    "hint": "История, команда и преимущества.",
+    "unique": true,
+    "group": "Страницы"
+  },
+  {
+    "code": "catalog",
+    "title": "Каталог",
+    "icon": "grid",
+    "hint": "Товары, услуги или разделы.",
+    "unique": true,
+    "group": "Страницы"
+  },
+  {
+    "code": "contacts",
+    "title": "Контакты",
+    "icon": "pin",
+    "hint": "Способы связи и адрес.",
+    "unique": true,
+    "group": "Страницы"
+  },
+  {
+    "code": "account",
+    "title": "Личный кабинет",
+    "icon": "user",
+    "hint": "Как выглядит пространство пользователя.",
+    "unique": true,
+    "group": "Функции"
+  },
+  {
+    "code": "chat",
+    "title": "Чат",
+    "icon": "chat",
+    "hint": "Обсуждения и переписка.",
+    "unique": false,
+    "group": "Функции"
+  },
+  {
+    "code": "custom",
+    "title": "Свой блок",
+    "icon": "plus",
+    "hint": "Опиши собственную идею.",
+    "unique": false,
+    "group": "Свой блок"
+  },
+  {
+    "code": "services",
+    "title": "Услуги",
+    "icon": "grid",
+    "hint": "Выберите, что рассказать об услугах.",
+    "unique": false,
+    "group": "Страницы"
+  },
+  {
+    "code": "product",
+    "title": "Карточка товара",
+    "icon": "grid",
+    "hint": "Фото, характеристики и варианты товара.",
+    "unique": false,
+    "group": "Страницы"
+  },
+  {
+    "code": "cart",
+    "title": "Корзина",
+    "icon": "grid",
+    "hint": "Состав и оформление заказа.",
+    "unique": false,
+    "group": "Страницы"
+  },
+  {
+    "code": "portfolio",
+    "title": "Портфолио",
+    "icon": "grid",
+    "hint": "Какие работы показать?",
+    "unique": false,
+    "group": "Страницы"
+  },
+  {
+    "code": "blog",
+    "title": "Блог",
+    "icon": "grid",
+    "hint": "Темы публикаций и рубрики.",
+    "unique": false,
+    "group": "Страницы"
+  },
+  {
+    "code": "reviews",
+    "title": "Отзывы",
+    "icon": "grid",
+    "hint": "Что показать в отзывах?",
+    "unique": false,
+    "group": "Страницы"
+  },
+  {
+    "code": "faq",
+    "title": "Вопросы",
+    "icon": "grid",
+    "hint": "На какие вопросы ответить?",
+    "unique": false,
+    "group": "Страницы"
+  },
+  {
+    "code": "form",
+    "title": "Форма заявки",
+    "icon": "plus",
+    "hint": "Опиши, как должна работать эта функция.",
+    "unique": false,
+    "group": "Функции"
+  },
+  {
+    "code": "payment",
+    "title": "Онлайн-оплата",
+    "icon": "plus",
+    "hint": "Опиши, как должна работать эта функция.",
+    "unique": false,
+    "group": "Функции"
+  },
+  {
+    "code": "admin",
+    "title": "Админка",
+    "icon": "plus",
+    "hint": "Опиши, как должна работать эта функция.",
+    "unique": false,
+    "group": "Функции"
+  },
+  {
+    "code": "telegram",
+    "title": "Бот Telegram",
+    "icon": "plus",
+    "hint": "Опиши, как должна работать эта функция.",
+    "unique": false,
+    "group": "Функции"
+  },
+  {
+    "code": "map",
+    "title": "Карта",
+    "icon": "plus",
+    "hint": "Опиши, как должна работать эта функция.",
+    "unique": false,
+    "group": "Функции"
+  },
+  {
+    "code": "push",
+    "title": "Push-уведомления",
+    "icon": "plus",
+    "hint": "Опиши, как должна работать эта функция.",
+    "unique": false,
+    "group": "Функции"
+  },
+  {
+    "code": "search",
+    "title": "Поиск",
+    "icon": "plus",
+    "hint": "Опиши, как должна работать эта функция.",
+    "unique": false,
+    "group": "Функции"
+  },
+  {
+    "code": "languages",
+    "title": "Два языка",
+    "icon": "plus",
+    "hint": "Опиши, как должна работать эта функция.",
+    "unique": false,
+    "group": "Функции"
+  },
+  {
+    "code": "crm",
+    "title": "CRM",
+    "icon": "plus",
+    "hint": "Опиши, как должна работать эта функция.",
+    "unique": false,
+    "group": "Функции"
+  },
+  {
+    "code": "analytics",
+    "title": "Аналитика",
+    "icon": "plus",
+    "hint": "Опиши, как должна работать эта функция.",
+    "unique": false,
+    "group": "Функции"
+  },
+  {
+    "code": "offline",
+    "title": "Офлайн-режим",
+    "icon": "plus",
+    "hint": "Опиши, как должна работать эта функция.",
+    "unique": false,
+    "group": "Функции"
+  },
+  {
+    "code": "social",
+    "title": "Вход через соцсети",
+    "icon": "plus",
+    "hint": "Опиши, как должна работать эта функция.",
+    "unique": false,
+    "group": "Функции"
+  }
+]
