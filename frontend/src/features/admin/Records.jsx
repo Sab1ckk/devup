@@ -17,6 +17,13 @@ const statuses = {
   done: "Сдана",
   cancelled: "Отменена",
 };
+const contactLabels = {
+  tg: "Телеграм",
+  telegram: "Телеграм",
+  vk: "Вконтакте",
+  email: "Почта",
+  max: "MAX",
+};
 const date = (value) => (value ? new Date(value).toLocaleString("ru") : "—");
 function useResource(path) {
   const [data, setData] = useState(null),
@@ -350,11 +357,20 @@ function RequestBody({ data, refresh }) {
               </div>
             ),
         )}
-        <h2 className="h2">Контакты</h2>
-        {data.contacts.map((c) => (
-          <p key={c.kind}>{c.value}</p>
-        ))}
-        <h2 className="h2">Структура проекта</h2>
+        <h2 className="h2 request-section-title">Контакты</h2>
+        <div className="request-contacts">
+          {data.contacts.map((c) => (
+            <p key={c.kind} className="request-contact-item">
+              <span className="up request-contact-kind user-text">
+                {contactLabels[c.kind] || c.kind}:
+              </span>
+              <span className="user-text">{c.value}</span>
+            </p>
+          ))}
+        </div>
+        <h2 className="h2 request-section-title request-structure-title">
+          Структура проекта
+        </h2>
         <div className="review-list request-block-descriptions">
           {data.blocks.map((b) => (
             <article key={b.position}>

@@ -8,5 +8,27 @@ node_modules/
 dist/
 test-results/
 playwright-report/
-
+template
 media/
+
+# Python
+*.py[cod]
+.coverage
+.coverage.*
+htmlcov/
+.ruff_cache/
+.mypy_cache/
+
+# Отчёты frontend
+coverage/
+blob-report/
+
+# Логи
+*.log
+
+# Локальные настройки редакторов и ОС
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
