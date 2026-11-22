@@ -4,6 +4,7 @@
 **/.env
 .env
 .git
+template
 media
 frontend/test-results
 frontend/playwright-report

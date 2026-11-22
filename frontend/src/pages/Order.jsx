@@ -6,6 +6,7 @@ import { ErrorHint, Field, useUI } from "../components/UI";
 import Builder from "../features/Builder";
 import useDraft from "../hooks/useDraft";
 import useMailStatus from "../hooks/useMailStatus";
+import DeadlineField from "../components/DeadlineField";
 
 function SuccessScreen({ result }) {
   const { toast, open } = useUI(),
@@ -226,11 +227,9 @@ export default function Order() {
                 {fieldError("design_text")}
               </label>
               <div className="row2">
-                <Field
+                <DeadlineField
                   label="Сроки"
                   name="deadline_text"
-                  maxLength={4000}
-                  placeholder="До даты или диапазон"
                   value={draft.deadline_text}
                   onChange={change}
                 />
@@ -249,6 +248,7 @@ export default function Order() {
                 type="email"
                 autoComplete="email"
                 maxLength={320}
+                placeholder="@email"
                 value={draft.email}
                 onChange={change}
                 hint="На указанную почту отправляются номер заявки и код привязки. Без почты код отображается только на экране."
@@ -260,7 +260,7 @@ export default function Order() {
                 placeholder="@username или ссылка"
                 value={draft.telegram}
                 onChange={change}
-                hint="Нужен менеджеру, чтобы связаться. Заявку к аккаунту по нему не привяжем."
+                hint="Нужен менеджеру, чтобы связаться. Заявку к аккаунту по нему не привязывается."
               />
               <Field
                 label="ВКонтакте"
@@ -269,7 +269,7 @@ export default function Order() {
                 placeholder="Имя или ссылка на профиль"
                 value={draft.vk}
                 onChange={change}
-                hint="Нужен менеджеру, чтобы связаться. Заявку к аккаунту по нему не привяжем."
+                hint="Нужен менеджеру, чтобы связаться. Заявку к аккаунту по нему не привязывается."
               />
               <label className="honeypot" aria-hidden="true">
                 Сайт
