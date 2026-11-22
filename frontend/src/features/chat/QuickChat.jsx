@@ -80,7 +80,7 @@ export default function QuickChat() {
           <>
             <p className="quick-chat-empty">
               {sessionError?.status === 401
-                ? "Сессия закончилась. Войди снова."
+                ? "Сессия закончилась. Требуется повторная авторизация."
                 : "Чат доступен после входа"}
             </p>
             <a href="/chat?thread=direct&login=1" className="btn btn-primary">

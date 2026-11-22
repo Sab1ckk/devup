@@ -9,7 +9,7 @@ class MailSender(Protocol):
 
 def email_card(label, highlight, footer, *, link=None, link_label='Открыть DEVUP', code=False):
     """Use table cells and inline styles for mail clients, with a fluid card width."""
-    ink, background, accent, border = '#f1f4e6', '#0c2a1e', '#e5ff00', '#64796e'
+    ink, background, accent, border = '#f1f1f2', '#080808', '#bfc3c7', '#55595f'
     escape = html.escape
     size = '64px' if code else '32px'
     layout = f"""
@@ -46,7 +46,7 @@ def render(template, context):
                    else 'DEVUP: код подтверждения')
         code = str(context['code'])
         minutes = settings().code_minutes
-        note = 'Если это не ты, просто проигнорируй письмо и смени пароль.'
+        note = 'Если вход не запрашивался, письмо может быть проигнорировано. Рекомендуется смена пароля.'
         body = f'Код подтверждения: {code}\nСрок действия — {minutes} мин.\n{note}'
         markup = email_card('Код подтверждения', code, [f'СРОК ДЕЙСТВИЯ:\n{minutes} МИН.', note], code=True)
     elif template in ('chat_client', 'chat_manager'):
@@ -57,13 +57,13 @@ def render(template, context):
         route = (f"/admin/chats/{context['thread_id']}" if to_manager else
                  f'/chat?thread=devup-{number}' if number is not None else '/chat?thread=direct')
         url = settings().base_url.rstrip('/') + route
-        note = 'Клиент: ' + context['owner'] if to_manager else 'Ответ менеджера ждёт тебя в чате.'
+        note = 'Клиент: ' + context['owner'] if to_manager else 'Ответ менеджера получен в чате.'
         body = title + ('\n' + note if to_manager else '') + '\n' + url
         markup = email_card('Новое сообщение', title, [note], link=url, link_label='Открыть диалог')
     elif template == 'existing':
         subject = 'DEVUP: вход в аккаунт'
-        body = 'Аккаунт уже есть. Войди с почтой и паролем.'
-        markup = email_card('Вход в аккаунт', 'Аккаунт уже есть', ['Войди с почтой и паролем.'],
+        body = 'Аккаунт уже есть. Вход выполняется по почте и паролю.'
+        markup = email_card('Вход в аккаунт', 'Аккаунт уже есть', ['Вход выполняется по почте и паролю.'],
                             link=settings().base_url)
     else:
         subject = 'DEVUP: заявка принята'
@@ -71,9 +71,9 @@ def render(template, context):
         code = context.get('code')
         url = settings().base_url
         body = f'Номер заявки: {number}'
-        footer = ['Заявка принята. Сохрани её номер.']
+        footer = ['Заявка принята. Номер заявки необходимо сохранить.']
         if code:
-            note = 'Сохрани код, он нужен при регистрации.'
+            note = 'Код необходимо сохранить для регистрации.'
             body += f'\nКод привязки: {code}\n{note}'
             footer = [f'КОД ПРИВЯЗКИ:\n{code}', note]
         body += '\n' + url
@@ -105,7 +105,7 @@ def deliver(log_id,to,template,context):
         SMTPSender().send(to,template,context)
         status,error='sent',None
     except Exception:
-        status,error='failed','Не удалось отправить письмо. Запроси код повторно.'
+        status,error='failed','Не удалось отправить письмо. Код может быть запрошен повторно.'
     with SessionLocal.begin() as db:
         row=db.get(EmailLog,log_id)
         if row: row.status=status;row.error=error

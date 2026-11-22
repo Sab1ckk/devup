@@ -23,7 +23,7 @@ class PortfolioEdit(Schema):
     @model_validator(mode='after')
     def valid(self):
         if len({x.media_id for x in self.images})!=len(self.images):raise ValueError('Картинки не должны повторяться')
-        if sum(x.is_cover for x in self.images)>1:raise ValueError('Выбери одну обложку')
+        if sum(x.is_cover for x in self.images)>1:raise ValueError('Должна быть выбрана одна обложка')
         if self.status=='published' and (not self.title.strip() or not self.images):raise ValueError('Для публикации нужны название и картинки')
         return self
 class PortfolioOrder(Schema):

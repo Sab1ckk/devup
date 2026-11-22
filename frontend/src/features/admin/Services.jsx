@@ -39,7 +39,7 @@ function ServiceCard({ service }) {
   const fieldError = (name) =>
     (error?.field === name ||
       error?.errors?.some((e) => e.field.startsWith(name))) && (
-      <ErrorHint error="Проверь это поле и допустимую длину." />
+      <ErrorHint error="Значение или длина поля указаны неверно." />
     );
   return (
     <article className="card admin-service">
@@ -79,13 +79,13 @@ function ServiceCard({ service }) {
           step={1}
           value={data.price_from}
           onChange={change}
-          hint="Оставь пустым, чтобы показать «по запросу»."
+          hint="При пустом значении будет отображено «по запросу»."
         />
         {fieldError("price_from")}
         <ErrorHint error={error} />
         <div className="cta">
           <button className="btn btn-primary" disabled={busy}>
-            {busy ? "Сохраняем…" : "Сохранить"}
+            {busy ? "Выполняется сохранение…" : "Сохранить"}
           </button>
           <a
             className="btn btn-sm"
@@ -110,11 +110,11 @@ export default function Services() {
     <>
       <section className="pagehd">
         <h1>Услуги</h1>
-        <p>Изменяй тексты и ориентировочные цены.</p>
+        <p>Тексты и ориентировочные цены доступны для редактирования.</p>
       </section>
       <ErrorHint error={error} />
       {!rows && !error && <p role="status">Загружаем услуги…</p>}
-      <section className="admin-grid">
+      <section className="admin-grid admin-services-grid">
         {rows?.map((s) => (
           <ServiceCard key={s.code} service={s} />
         ))}

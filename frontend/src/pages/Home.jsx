@@ -92,51 +92,33 @@ export default function Home() {
           <div className="story-pin">
             <div className="story-copy">
               <ol className="story-steps">
-                <li>
+                <li className="st1">
                   <span className="up">01</span>
                   <h3>Форма</h3>
                   <p>
-                    Выбираешь тип проекта, описываешь задачу и оставляешь
-                    контакты.
+                    Выбирается тип проекта, описывается задача и указываются контакты.
                   </p>
                 </li>
-                <li>
+                <li className="st2">
                   <span className="up">02</span>
                   <h3>Номер</h3>
-                  <p>Получаешь номер заявки и предварительную оценку.</p>
+                  <p>Присваивается номер заявки и формируется предварительная оценка.</p>
                 </li>
-                <li>
+                <li className="st3">
                   <span className="up">03</span>
                   <h3>Детали</h3>
                   <p>
-                    С менеджером согласуешь объём работы, сроки и стоимость.
+                    С менеджером согласуются объём работы, сроки и стоимость.
                   </p>
                 </li>
-                <li>
+                <li className="st4">
                   <span className="up">04</span>
                   <h3>Работа</h3>
-                  <p>Следишь за ходом проекта в чате и получаешь результат.</p>
+                  <p>Ход проекта отображается в чате, готовый результат передаётся заказчику.</p>
                 </li>
               </ol>
             </div>
-            <ol className="story-map" aria-label="Путь заявки">
-              <li>
-                <span className="up">Задача → форма</span>
-                <strong>Заявка</strong>
-              </li>
-              <li>
-                <span className="up">Номер → менеджер</span>
-                <strong>Оценка</strong>
-              </li>
-              <li>
-                <span className="up">Объём → сроки → цена</span>
-                <strong>Согласование</strong>
-              </li>
-              <li>
-                <span className="up">Работа → сдача</span>
-                <strong>Разработка</strong>
-              </li>
-            </ol>
+
           </div>
         </section>
         <section className="sec">

@@ -66,3 +66,24 @@ test('review is sent to moderation and appears only after publication', async ({
 });
 
 
+
+test('service editor headings never overlap fields', async ({page, request}) => {
+ await request.post('/__test/reset');
+ await login(page, request);
+ await page.goto('/admin/services');
+ await expect(page.locator('.admin-service')).toHaveCount(4);
+ for(const width of [360,768,1280]){
+  await page.setViewportSize({width,height:900});
+  await page.evaluate(()=>document.fonts.ready);
+  const cards = await page.locator('.admin-service').evaluateAll(cards=>cards.map(card=>{
+   const title=card.querySelector('h2').getBoundingClientRect();
+   const form=card.querySelector('form').getBoundingClientRect();
+   return {titleBottom:title.bottom,formTop:form.top,after:getComputedStyle(card,'::after').display};
+  }));
+  for(const card of cards){
+   expect(card.formTop-card.titleBottom).toBeGreaterThanOrEqual(23);
+   expect(card.after).toBe('none');
+  }
+  if(width>600)expect(Math.abs(cards[0].formTop-cards[1].formTop)).toBeLessThan(1);
+ }
+});

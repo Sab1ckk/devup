@@ -89,7 +89,7 @@ function SignedInChat({ user, params, open }) {
         />
       ) : (
         <section className="conversation chat-placeholder">
-          <p className="chat-empty-body">Выбери диалог</p>
+          <p className="chat-empty-body">Диалог не выбран</p>
         </section>
       )}
     </div>

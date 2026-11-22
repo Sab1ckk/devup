@@ -20,7 +20,7 @@ class Register(Credentials):
     claim_code: str = Field(default='',max_length=100)
     @model_validator(mode='after')
     def pair(self):
-        if bool(self.number) != bool(self.claim_code): raise ValueError('Заполни номер заявки и код вместе или оставь оба поля пустыми')
+        if bool(self.number) != bool(self.claim_code): raise ValueError('Номер заявки и код должны быть указаны вместе либо оба поля должны быть оставлены пустыми')
         return self
 
 class ChallengeInput(Schema):
@@ -50,7 +50,7 @@ class Contact(Schema):
             from pydantic import TypeAdapter
             self.value=str(TypeAdapter(EmailStr).validate_python(self.value)).lower()
         elif not re.fullmatch(r'(?:https?://)?(?:www\.)?(?:(?:t\.me|telegram\.me|vk\.com)/)?@?[\w.\-]+/?',self.value):
-            raise ValueError('Укажи имя пользователя или ссылку на профиль')
+            raise ValueError('Должно быть указано имя пользователя или ссылка на профиль')
         return self
 class CreateRequest(Schema):
     project_type: Literal['site','app','small','study']

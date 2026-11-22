@@ -73,7 +73,7 @@ export default function Builder({ draft, setDraft, disabled }) {
   return (
     <div className="builder">
       <aside className="block-library">
-        <span className="up">01 / выбери основу</span>
+        <span className="up">01 / выбор основы</span>
         <div className="type-picks" role="group" aria-label="Тип проекта">
           {[
             ["site", "Сайт"],
@@ -97,7 +97,7 @@ export default function Builder({ draft, setDraft, disabled }) {
           ))}
         </div>
         <h2>Добавить блок</h2>
-        <p className="dim">Нажми или перетащи на полотно.</p>
+        <p className="dim">Блок добавляется нажатием или перетаскиванием на полотно.</p>
         <div id="block-library">
           {["Страницы", "Функции", "Свой блок"].map((group) => (
             <section className="library-group" key={group}>
@@ -174,7 +174,7 @@ export default function Builder({ draft, setDraft, disabled }) {
                 onDrop={(e) => drop(e, block.id)}
               >
                 <div className="project-block-head">
-                  <span className="block-number block-drag-handle" draggable={!disabled} title="Перетащи блок">
+                  <span className="block-number block-drag-handle" draggable={!disabled} title="Перенос блока">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <h3 className="block-label">{spec.title}</h3>
@@ -254,10 +254,10 @@ export default function Builder({ draft, setDraft, disabled }) {
           })}
         </div>
         <div id="builder-empty" hidden={blocks.length !== 0}>
-          Пока пусто. Добавь первый блок из библиотеки.
+          Блоки пока не добавлены.
         </div>
         <div className="drop-target" id="drop-target">
-          <Icon name="plus" /> Перетащи блок сюда или выбери слева
+          <Icon name="plus" /> Блок может быть перенесён сюда или выбран слева
         </div>
       </section>
     </div>

@@ -157,7 +157,7 @@ def request_detail(number:int,db:Session=DB):
 @router.post('/requests/{number}/status')
 def change_status(number:int,data:ChangeStatus,admin:User=ADMIN,db:Session=DB):
     p=get_request(db,number,True)
-    if p.status==data.status:fail(400,'status_unchanged','Выбери другой статус.','status')
+    if p.status==data.status:fail(400,'status_unchanged','Требуется другой статус.','status')
     db.add(RequestStatusHistory(request_id=p.id,from_status=p.status,to_status=data.status,changed_by_user_id=admin.id,comment=data.comment));p.status=data.status;p.updated_at=now();db.commit();return {'ok':True}
 @router.post('/requests/{number}/claim-code')
 def new_claim_code(number:int,db:Session=DB):
@@ -208,6 +208,15 @@ def public_reviews(db: Session = DB):
     )]
 
 
+@public.get('/reviews/mine')
+def my_reviews(request: Request, db: Session = DB):
+    user, _ = current(db, request, True)
+    rows = db.execute(review_query().where(Review.user_id == user.id))
+    result = [{**review_data(row, title), 'status': row.status} for row, title in rows]
+    db.commit()
+    return result
+
+
 @router.get('/reviews')
 def admin_reviews(page: int = Query(1, ge=1), db: Session = DB):
     total = db.scalar(select(func.count()).select_from(Review))
@@ -239,7 +248,7 @@ def submit_review(data: ReviewSubmission, request: Request, db: Session = DB):
     hit(db, 'reviews:ip:' + ip(request), 5, 3600)
     service = db.scalar(select(Service).where(Service.code == data.service_code))
     if service is None:
-        fail(422, 'service_required', 'Выбери доступную услугу.', 'service_code')
+        fail(422, 'service_required', 'Услуга должна быть выбрана.', 'service_code')
     user, _ = current(db, request)
     row = Review(user_id=user.id if user else None, service_id=service.id,
                  author_name=data.author_name, rating=data.rating, body=data.body, status='pending')

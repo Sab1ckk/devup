@@ -45,7 +45,7 @@ export default function AuthDialog() {
           Boolean(values.number) !== Boolean(values.claim_code)
         )
           throw new Error(
-            "Заполни номер заявки и код вместе или оставь оба поля пустыми.",
+            "Номер заявки и код должны быть указаны вместе либо оба поля должны быть оставлены пустыми.",
           );
         const data =
           mode === "register"
@@ -70,7 +70,7 @@ export default function AuthDialog() {
           close();
           setStep("credentials");
           navigate(destination);
-          toast("Ты вошёл в аккаунт");
+          toast("Вход в аккаунт выполнен");
         }
       }
     } catch (err) {
@@ -193,21 +193,20 @@ export default function AuthDialog() {
                     onChange={change}
                   />
                   <p className="hint">
-                    Заполняй оба поля или оставь пустыми. Код был на экране
-                    после отправки заявки.
+                    Оба поля должны быть заполнены вместе или оставлены пустыми. Код отображается после отправки заявки.
                   </p>
                 </>
               )}
             </>
           ) : (
             <>
-              <CodeStep value={code} onChange={setCode} mailId={challenge?.mail_id} message={<>Отправили код на {values.email}. Он действует 10 минут.</>} wait={wait} busy={busy} onResend={resend} onBack={()=>{setStep('credentials');setError(null);setCode('')}}/>
+              <CodeStep value={code} onChange={setCode} mailId={challenge?.mail_id} message={<>Код отправлен на {values.email}. Он действует 10 минут.</>} wait={wait} busy={busy} onResend={resend} onBack={()=>{setStep('credentials');setError(null);setCode('')}}/>
             </>
           )}
           <ErrorHint error={error} />
           <button type="submit" className="btn btn-primary" disabled={busy}>
             {busy
-              ? "Подожди…"
+              ? "Запрос обрабатывается…"
               : step === "code"
                 ? "Подтвердить"
                 : mode === "register"

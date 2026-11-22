@@ -46,7 +46,7 @@ async def guard(request:Request,call_next):
             upload=request.method=='POST' and request.url.path=='/api/admin/media'
             content_type=request.headers.get('content-type','').split(';')[0]
             if request.headers.get('x-requested-with')!='devup' or (content_type!='application/json' and not (upload and content_type=='multipart/form-data')):
-                return JSONResponse({'code':'csrf','message':'Обнови страницу и попробуй ещё раз.'},status_code=403)
+                return JSONResponse({'code':'csrf','message':'Требуется обновление страницы и повторная отправка.'},status_code=403)
             if upload:
                 try:
                     with SessionLocal() as db:
@@ -74,12 +74,12 @@ async def http_error(request,exc):
 
 @app.exception_handler(RequestValidationError)
 async def validation_error(request,exc):
-    errors=[{'field':'.'.join(str(x) for x in e['loc'][1:]),'message':'Проверь значение и допустимую длину поля.'} for e in exc.errors()]
-    return JSONResponse({'code':'validation','message':'Проверь заполненные поля.','field':errors[0]['field'] if errors else None,'errors':errors},status_code=422)
+    errors=[{'field':'.'.join(str(x) for x in e['loc'][1:]),'message':'Значение или длина поля указаны неверно.'} for e in exc.errors()]
+    return JSONResponse({'code':'validation','message':'Поля заполнены неверно.','field':errors[0]['field'] if errors else None,'errors':errors},status_code=422)
 
 @app.exception_handler(Exception)
 async def unexpected(request,exc):
-    return JSONResponse({'code':'server_error','message':'Не удалось выполнить запрос. Попробуй позже.'},status_code=500)
+    return JSONResponse({'code':'server_error','message':'Не удалось выполнить запрос. Повторная попытка будет доступна позднее.'},status_code=500)
 
 app.include_router(admin_auth_router)
 app.include_router(admin_router)

@@ -125,7 +125,7 @@ function Login() {
         )}
         <ErrorHint error={error} />
         <button className="btn btn-primary" disabled={busy}>
-          {busy ? "Подожди…" : challenge ? "Подтвердить" : "Войти"}
+          {busy ? "Запрос обрабатывается…" : challenge ? "Подтвердить" : "Войти"}
         </button>
       </form>
     </section>

@@ -26,7 +26,7 @@ def current_admin(db,req,required=True):
     user=db.get(User,session.user_id) if session else None
     if user and (user.role!='manager' or not user.username or not user.is_active or not user.email_verified_at):user=None
     if not user:
-        if required:fail(401,'admin_unauthorized','Сессия истекла. Войди в админ-панель.')
+        if required:fail(401,'admin_unauthorized','Сессия истекла. Требуется авторизация в админ-панели.')
         return None,None
     session.expires_at=min(at+timedelta(minutes=cfg.admin_session_idle_minutes),session.created_at+timedelta(hours=cfg.admin_session_max_hours));session.last_seen_at=at
     req.state.admin_expires=session.expires_at
@@ -47,7 +47,7 @@ def login(data:Login,req:Request,tasks:BackgroundTasks,db:Session=DB):
 @router.post('/verify')
 def verify(data:Verify,req:Request,response:Response,db:Session=DB):
     c=db.scalar(select(AuthChallenge).where(AuthChallenge.id==data.challenge_id).with_for_update())
-    if not c or c.purpose!='admin_login' or c.consumed_at or c.expires_at<=now() or c.attempts>=c.max_attempts:fail(400,'code_expired','Код больше не действует. Начни вход заново.')
+    if not c or c.purpose!='admin_login' or c.consumed_at or c.expires_at<=now() or c.attempts>=c.max_attempts:fail(400,'code_expired','Код больше не действует. Требуется повторный вход.')
     if not matches(data.code,c.code_hash,str(c.id)):
         c.attempts+=1
         if c.attempts>=c.max_attempts:c.consumed_at=now()
@@ -62,11 +62,11 @@ def verify(data:Verify,req:Request,response:Response,db:Session=DB):
 @router.post('/resend')
 def resend(data:ChallengeInput,req:Request,tasks:BackgroundTasks,db:Session=DB):
     cfg=settings();c=db.scalar(select(AuthChallenge).where(AuthChallenge.id==data.challenge_id).with_for_update())
-    if not c or c.purpose!='admin_login' or c.consumed_at or c.expires_at<=now() or c.resend_count>=cfg.resend_max:fail(400,'code_expired','Начни вход заново.')
+    if not c or c.purpose!='admin_login' or c.consumed_at or c.expires_at<=now() or c.resend_count>=cfg.resend_max:fail(400,'code_expired','Требуется повторный вход.')
     elapsed=(now()-c.last_sent_at).total_seconds()
-    if elapsed<cfg.resend_seconds:fail(429,'resend_wait','Подожди перед новой отправкой.',retry=max(1,int(cfg.resend_seconds-elapsed)+1))
+    if elapsed<cfg.resend_seconds:fail(429,'resend_wait','Повторная отправка пока недоступна.',retry=max(1,int(cfg.resend_seconds-elapsed)+1))
     user=db.get(User,c.user_id)
-    if user.role!='manager' or not user.is_active:fail(400,'code_expired','Начни вход заново.')
+    if user.role!='manager' or not user.is_active:fail(400,'code_expired','Требуется повторный вход.')
     mail_limits(db,user.email,req);code=verification_code();c.code_hash=secret_hash(code,str(c.id));c.resend_count+=1;c.last_sent_at=now();c.expires_at=now()+timedelta(minutes=cfg.code_minutes)
     mail_id=enqueue(db,tasks,user.email,'admin_code',{'code':code});db.commit();return {'resend_after':cfg.resend_seconds,'mail_id':mail_id}
 

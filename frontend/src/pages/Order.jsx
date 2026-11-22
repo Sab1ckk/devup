@@ -33,10 +33,10 @@ function SuccessScreen({ result }) {
           <>
             <p className="up">Код привязки</p>
             <p className="claim-secret code">{result.claim_code}</p>
-            <p>Сохрани этот код. Показываем его один раз.</p>
+            <p>Код должен быть сохранён. Он отображается один раз.</p>
           </>
         ) : (
-          <p>Заявка привязана к твоему кабинету.</p>
+          <p>Заявка привязана к личному кабинету.</p>
         )}
       </div>
       {result.email && (
@@ -44,7 +44,7 @@ function SuccessScreen({ result }) {
           {receipt?.status === "sent"
             ? `Копия отправлена на ${result.email}`
             : receipt?.status === "failed"
-              ? "Письмо не отправлено. Сохрани номер и код с этого экрана."
+              ? "Письмо не отправлено. Номер и код должны быть сохранены с этого экрана."
               : "Проверяем отправку письма…"}
         </p>
       )}
@@ -64,7 +64,7 @@ function SuccessScreen({ result }) {
               checked={saved}
               onChange={(e) => setSaved(e.target.checked)}
             />
-            <span>Я сохранил код</span>
+            <span>Код сохранён</span>
           </label>
           <button
             className="btn btn-primary"
@@ -99,7 +99,7 @@ export default function Order() {
   function fieldError(name) {
     return error?.field === name ||
       error?.errors?.some((e) => e.field === name) ? (
-      <ErrorHint error="Проверь это поле." />
+      <ErrorHint error="Поле заполнено неверно." />
     ) : null;
   }
   async function submit(e) {
@@ -109,7 +109,7 @@ export default function Order() {
       .filter((kind) => draft[kind]?.trim())
       .map((kind) => ({ kind, value: draft[kind].trim() }));
     if (!contacts.length && !user) {
-      setError({ message: "Оставь хотя бы один контакт.", field: "contacts" });
+      setError({ message: "Должен быть указан хотя бы один контакт.", field: "contacts" });
       return;
     }
     lock.current = true;
@@ -152,13 +152,12 @@ export default function Order() {
     <>
       <section className="pagehd">
         <h1>
-          Твой проект.
+          Структура проекта.
           <br />
           <span className="hl">По блокам.</span>
         </h1>
         <p>
-          Добавляй нужное, меняй порядок, оставляй заметки. Соберём картину
-          будущего проекта.
+          Структура проекта составляется из блоков. Порядок и описания могут быть изменены.
         </p>
       </section>
       {restored && (
@@ -226,15 +225,6 @@ export default function Order() {
                 />
                 {fieldError("design_text")}
               </label>
-              <div className="attachment-mock">
-                <span>
-                  <svg className="icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M6 18 18 6M6 6h12v12" />
-                  </svg>{" "}
-                  Макеты, фото и документы
-                </span>
-                <small>Область прикрепления файлов · макет</small>
-              </div>
               <div className="row2">
                 <Field
                   label="Сроки"
@@ -261,7 +251,7 @@ export default function Order() {
                 maxLength={320}
                 value={draft.email}
                 onChange={change}
-                hint="Рекомендуем указать почту: на неё придёт номер заявки и код привязки, так их не потеряешь. Без почты код будет только на экране."
+                hint="На указанную почту отправляются номер заявки и код привязки. Без почты код отображается только на экране."
               />
               <Field
                 label="Telegram"
@@ -292,11 +282,11 @@ export default function Order() {
                 />
               </label>
               <ErrorHint error={error} />
-              {user && <p className="hint">Оставь все контакты пустыми, чтобы использовать сохранённые контакты и почту аккаунта.</p>}
+              {user && <p className="hint">При пустых полях используются сохранённые контакты и почта аккаунта.</p>}
             <div className="brief-end">
                 <p>
                   Всё начинается
-                  <br />с твоей идеи.
+                  <br />с описания идеи.
                 </p>
                 <button
                   className="btn btn-primary"

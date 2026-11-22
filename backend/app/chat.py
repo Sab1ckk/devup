@@ -255,7 +255,7 @@ def admin_threads(filter: Literal['all','unread','request','direct'] = 'all',
 @admin.post('/threads/ensure')
 def ensure(data: Ensure, db: Session = DB):
     if (data.user_id is None) == (data.request_number is None):
-        fail(422, 'target', 'Выбери заявку или клиента.')
+        fail(422, 'target', 'Должна быть выбрана заявка или клиент.')
     project = request_target(db, data.request_number) if data.request_number is not None else None
     user = db.get(User, project.user_id if project else data.user_id)
     if not user or user.role not in ('client', 'customer') or not user.email_verified_at:

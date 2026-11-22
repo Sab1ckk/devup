@@ -126,7 +126,7 @@ export function AdminChats() {
                   {!detailError && "Загружаем диалог…"}
                 </>
               ) : (
-                "Выбери диалог"
+                "Диалог не выбран"
               )}
             </div>
           </section>

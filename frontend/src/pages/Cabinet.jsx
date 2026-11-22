@@ -53,7 +53,7 @@ function ClaimDialog({ refresh }) {
         Найти мои заявки
       </button>
       <p className="hint">
-        Ищем заявки этого браузера и заявки с твоей подтверждённой почтой.
+        Ищем заявки этого браузера и заявки с подтверждённой почтой аккаунта.
       </p>
       <div className="review-list">
         {candidates.map((p) => (
@@ -228,7 +228,7 @@ export default function Cabinet() {
     return (
       <section className="pagehd">
         <h1>Кабинет</h1>
-        <p>Войди, чтобы увидеть свои заявки.</p>
+        <p>Просмотр заявок доступен после авторизации.</p>
         <button className="btn btn-primary" onClick={() => open("auth")}>
           Войти
         </button>

@@ -50,7 +50,7 @@ def new_challenge(db,user,purpose,pending,req,tasks):
 
 def number_value(value):
     value=value.upper().strip().removeprefix('DEVUP-')
-    if not value.isdigit(): fail(400,'claim_invalid','Проверь номер заявки и код.','number')
+    if not value.isdigit(): fail(400,'claim_invalid','Номер заявки или код указан неверно.','number')
     return int(value)
 
 def validate_claim(db,number,code,req):
@@ -64,7 +64,7 @@ def validate_claim(db,number,code,req):
             row.failed_attempts+=1
             if row.failed_attempts>=cfg.claim_request_limit: row.locked_until=now()+timedelta(hours=1)
             db.commit()
-        fail(400,'claim_invalid','Проверь номер заявки и код.','claim_code')
+        fail(400,'claim_invalid','Номер заявки или код указан неверно.','claim_code')
     return project
 
 def claim(db,project_id,user,method,req):
@@ -93,7 +93,7 @@ def register(data:Register,req:Request,tasks:BackgroundTasks,db:Session=DB):
     email=str(data.email)
     db.execute(text('SELECT pg_advisory_xact_lock(hashtextextended(:email, 1))'),{'email':email})
     user=db.scalar(select(User).where(User.email==email).with_for_update())
-    if user and user.role not in ('client','customer'): fail(400,'credentials','Проверь почту и пароль.')
+    if user and user.role not in ('client','customer'): fail(400,'credentials','Почта или пароль указаны неверно.')
     mail_limits(db,email,req)
     if user and user.email_verified_at:
         mail_id=enqueue(db,tasks,email,'existing',{})
@@ -109,19 +109,19 @@ def login(data:Credentials,req:Request,tasks:BackgroundTasks,db:Session=DB):
     hit(db,'login:ip:'+ip(req),cfg.login_ip_limit,900);hit(db,'login:email:'+email,cfg.login_email_limit,900)
     user=db.scalar(select(User).where(User.email==email))
     valid=check_password(data.password,user.password_hash if user else DUMMY_HASH)
-    if not valid or not user or not user.is_active or not user.email_verified_at or user.role not in ('client','customer'): fail(400,'credentials','Проверь почту и пароль.')
+    if not valid or not user or not user.is_active or not user.email_verified_at or user.role not in ('client','customer'): fail(400,'credentials','Почта или пароль указаны неверно.')
     mail_limits(db,email,req);result=new_challenge(db,user,'login',None,req,tasks);db.commit();return result
 
 @router.post('/auth/verify')
 def verify(data:Verify,req:Request,response:Response,db:Session=DB):
     c=db.scalar(select(AuthChallenge).where(AuthChallenge.id==data.challenge_id).with_for_update())
-    if not c or c.purpose not in ('register','login') or c.consumed_at or c.expires_at<=now() or c.attempts>=c.max_attempts: fail(400,'code_expired','Код больше не действует. Начни вход заново.')
+    if not c or c.purpose not in ('register','login') or c.consumed_at or c.expires_at<=now() or c.attempts>=c.max_attempts: fail(400,'code_expired','Код больше не действует. Требуется повторный вход.')
     if not matches(data.code,c.code_hash,str(c.id)):
         c.attempts+=1
         if c.attempts>=c.max_attempts: c.consumed_at=now()
         left=max(0,c.max_attempts-c.attempts);db.commit();fail(400,'code_invalid',f'Неверный код. Осталось попыток: {left}.','code')
     user=db.get(User,c.user_id)
-    if not user or not user.is_active: fail(400,'code_expired','Начни вход заново.')
+    if not user or not user.is_active: fail(400,'code_expired','Требуется повторный вход.')
     c.consumed_at=now();user.email_verified_at=user.email_verified_at or now()
     linked=False
     if c.pending_request_id: linked=claim(db,c.pending_request_id,user,'registration_code',req)
@@ -135,9 +135,9 @@ def resend(data:ChallengeInput,req:Request,tasks:BackgroundTasks,db:Session=DB):
     if not c:
         hit(db,'resend:ip:'+ip(req),cfg.mail_ip_limit,3600)
         return {'resend_after':cfg.resend_seconds}
-    if c.purpose not in ('register','login') or c.consumed_at or c.expires_at<=now() or c.resend_count>=cfg.resend_max: fail(400,'code_expired','Начни вход заново.')
+    if c.purpose not in ('register','login') or c.consumed_at or c.expires_at<=now() or c.resend_count>=cfg.resend_max: fail(400,'code_expired','Требуется повторный вход.')
     seconds=(now()-c.last_sent_at).total_seconds()
-    if seconds<cfg.resend_seconds: fail(429,'resend_wait','Подожди перед новой отправкой.',retry=max(1,int(cfg.resend_seconds-seconds)+1))
+    if seconds<cfg.resend_seconds: fail(429,'resend_wait','Повторная отправка пока недоступна.',retry=max(1,int(cfg.resend_seconds-seconds)+1))
     user=db.get(User,c.user_id);mail_limits(db,user.email,req)
     code=verification_code();c.code_hash=secret_hash(code,str(c.id));c.resend_count+=1;c.last_sent_at=now();c.expires_at=now()+timedelta(minutes=cfg.code_minutes)
     mail_id=enqueue(db,tasks,user.email,'code',{'code':code});db.commit();return {'resend_after':cfg.resend_seconds,'mail_id':mail_id}
@@ -157,7 +157,7 @@ def create_request(data:CreateRequest,req:Request,response:Response,tasks:Backgr
     contacts = data.contacts
     if not contacts:
         if not user:
-            fail(422, 'contact_required', 'Оставь хотя бы один контакт.', 'contacts')
+            fail(422, 'contact_required', 'Должен быть указан хотя бы один контакт.', 'contacts')
         saved = {'email': Contact(kind='email', value=user.email)}
         previous = db.scalars(select(RequestContact).join(
             ProjectRequest, RequestContact.request_id == ProjectRequest.id

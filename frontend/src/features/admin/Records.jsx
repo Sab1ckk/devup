@@ -319,7 +319,7 @@ function RequestBody({ data, refresh }) {
   return (
     <>
       <section className="pagehd">
-        <h1>{data.display_number}</h1>
+        <h1 className="h2">{data.display_number}</h1>
 <OpenChat target={{request_number:data.number}} disabled={!data.owner}/>
         <p>
           {types[data.project_type]} · {statuses[data.status]} ·{" "}
@@ -344,7 +344,7 @@ function RequestBody({ data, refresh }) {
         ].map(
           ([key, label]) =>
             data[key] && (
-              <div key={key} className="admin-text">
+              <div key={key} className="admin-text request-copy">
                 <h2 className="h2">{label}</h2>
                 <p className="user-text">{data[key]}</p>
               </div>
@@ -355,7 +355,7 @@ function RequestBody({ data, refresh }) {
           <p key={c.kind}>{c.value}</p>
         ))}
         <h2 className="h2">Структура проекта</h2>
-        <div className="review-list">
+        <div className="review-list request-block-descriptions">
           {data.blocks.map((b) => (
             <article key={b.position}>
               <span className="up">{b.position + 1}</span>
@@ -421,7 +421,7 @@ function RequestBody({ data, refresh }) {
         <p className="code">{data.display_number}</p>
         <p className="claim-secret code">{secret}</p>
         <p>
-          Сохрани код. Показываем его один раз. Прежний код больше не работает.
+          Код должен быть сохранён. Он отображается один раз. Прежний код больше не работает.
         </p>
         <button className="btn" onClick={copy}>
           Скопировать

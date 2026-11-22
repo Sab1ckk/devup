@@ -19,5 +19,5 @@ def hit(db,key,limit,seconds):
         limits.execute(text('SELECT pg_advisory_xact_lock(hashtextextended(:key, 0))'),{'key':safe_key})
         cutoff=now()-timedelta(seconds=seconds)
         count=limits.scalar(select(func.count()).select_from(RateLimitHit).where(RateLimitHit.key==safe_key,RateLimitHit.created_at>cutoff))
-        if count>=limit: fail(429,'rate_limit','Слишком много попыток. Попробуй позже.',retry=seconds)
+        if count>=limit: fail(429,'rate_limit','Слишком много попыток. Повторная попытка будет доступна позднее.',retry=seconds)
         limits.add(RateLimitHit(key=safe_key))

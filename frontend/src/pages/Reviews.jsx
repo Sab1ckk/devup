@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../features/AuthContext";
 import { api } from "../lib/api";
 import { ErrorHint, useUI } from "../components/UI";
 
+const statuses = {
+  pending: "На модерации",
+  published: "Опубликован",
+  rejected: "Отклонён",
+};
 const ratings = [5, 4, 3, 2, 1];
 function Stars({ rating, average = false }) {
   return (
@@ -29,6 +35,25 @@ function Stars({ rating, average = false }) {
 }
 
 export default function Reviews() {
+  const { user } = useAuth();
+  const userId = user?.id;
+  const [personal, setPersonal] = useState(null);
+  const [revision, setRevision] = useState(0);
+  const mine = userId && personal?.userId === userId ? personal.rows : [];
+  useEffect(() => {
+    if (!userId) return;
+    let active = true;
+    api("/reviews/mine")
+      .then((rows) => {
+        if (active) setPersonal({ userId, rows });
+      })
+      .catch((error) => {
+        if (active) setPersonal({ userId, rows: [], error });
+      });
+    return () => {
+      active = false;
+    };
+  }, [userId, revision]);
   const [sort, setSort] = useState("new");
   const [reviews, setReviews] = useState(null);
   const [error, setError] = useState(null);
@@ -69,6 +94,7 @@ export default function Reviews() {
     setFormError(null);
     try {
       await api("/reviews", { ...fields, rating: Number(fields.rating) });
+      if (userId) setRevision((value) => value + 1);
       form.reset();
       form.closest("dialog").close();
       close();
@@ -91,6 +117,11 @@ export default function Reviews() {
       return Date.parse(a.created_at) - Date.parse(b.created_at);
     return Date.parse(b.created_at) - Date.parse(a.created_at);
   });
+  const ownIds = new Set(mine.map((review) => review.id));
+  const displayed = [
+    ...mine,
+    ...ordered.filter((review) => !ownIds.has(review.id)),
+  ];
   return (
     <>
       <section className="pagehd">
@@ -160,16 +191,27 @@ export default function Reviews() {
         <section className="review-list" aria-label="Отзывы клиентов">
           <ErrorHint error={error} />
           {!reviews && !error && <p role="status">Загружаем отзывы…</p>}
-          {reviews?.length === 0 && (
-            <p className="portfolio-empty">Отзывов пока нет.</p>
+          {userId && personal?.userId === userId && (
+            <ErrorHint error={personal.error} />
           )}
-          {ordered.map((review) => (
+          {reviews &&
+            displayed.length === 0 &&
+            (!userId || personal?.userId === userId) && (
+              <p className="portfolio-empty">Отзывов пока нет.</p>
+            )}
+          {displayed.map((review) => (
             <article key={review.id} data-rating={review.rating}>
               <h2>{review.author_name}</h2>
               <time dateTime={review.created_at}>
                 {new Date(review.created_at).toLocaleDateString("ru-RU")}
               </time>
               <Stars rating={review.rating} />
+              {ownIds.has(review.id) && (
+                <p className="up">
+                  <span className="request-status">Ваш отзыв</span> ·{" "}
+                  {statuses[review.status]}
+                </p>
+              )}
               <p className="up">{review.service}</p>
               <p className="user-text">{review.body}</p>
             </article>
@@ -212,7 +254,7 @@ export default function Reviews() {
               <span>Услуга</span>
               <select name="service_code" required defaultValue="">
                 <option value="" disabled>
-                  {services ? "Выбери услугу" : "Загрузка услуг…"}
+                  {services ? "Услуга не выбрана" : "Загрузка услуг…"}
                 </option>
                 {services?.map((service) => (
                   <option key={service.code} value={service.code}>
@@ -245,4 +287,3 @@ export default function Reviews() {
     </>
   );
 }
-

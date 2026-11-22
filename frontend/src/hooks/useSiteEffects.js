@@ -97,6 +97,12 @@ export default function useSiteEffects() {
         "--viewport-width",
         `${document.documentElement.clientWidth}px`,
       );
+    const header = document.querySelector(".site-header");
+    const updateHeader = () => document.documentElement.style.setProperty("--header-bottom", Math.max(0, header?.getBoundingClientRect().bottom ?? 0) + "px");
+    const headerObserver = new ResizeObserver(updateHeader);
+    if (header) headerObserver.observe(header);
+    window.addEventListener("scroll", updateHeader, {passive:true});
+    updateHeader();
     resize();
     document.addEventListener("pointerdown", outsidePalette);
     document.addEventListener("click", outsidePalette);
@@ -106,6 +112,8 @@ export default function useSiteEffects() {
     window.addEventListener("storage", restoreSavedPalette);
     window.addEventListener("pageshow", restoreSavedPalette);
     return () => {
+      headerObserver.disconnect();
+      window.removeEventListener("scroll", updateHeader);
       document.removeEventListener("pointerdown", outsidePalette);
       document.removeEventListener("click", outsidePalette);
       document.removeEventListener("click", click);

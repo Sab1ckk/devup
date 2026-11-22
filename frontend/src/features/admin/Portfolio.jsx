@@ -55,7 +55,7 @@ export function PortfolioList() {
       <ErrorHint error={error} />
       {!rows && !error && <p role="status">Загружаем работы…</p>}
       {rows?.length === 0 && (
-        <p className="portfolio-empty">Работ пока нет. Добавь первую.</p>
+        <p className="portfolio-empty">Работы пока не добавлены.</p>
       )}
       <section className="admin-grid">
         {rows?.map((p, index) => (
@@ -172,7 +172,7 @@ function Editor({ initial, id }) {
   }
   async function save(status) {
     if (busy || uploading) return;
-    if(status==='published'&&(!data.title.trim()||!data.images.length)){setError(new Error('Для публикации добавь название и хотя бы одну картинку.'));return;}
+    if(status==='published'&&(!data.title.trim()||!data.images.length)){setError(new Error('Для публикации должны быть добавлены название и хотя бы одна картинка.'));return;}
     setBusy(true);
     setError(null);
     const payload = {
@@ -224,7 +224,7 @@ function Editor({ initial, id }) {
   const fieldError = (name) =>
     (error?.field === name ||
       error?.errors?.some((e) => e.field.startsWith(name))) && (
-      <ErrorHint error="Проверь это поле." />
+      <ErrorHint error="Поле заполнено неверно." />
     );
   return (
     <>
@@ -287,7 +287,7 @@ function Editor({ initial, id }) {
           <span>
             {uploading
               ? "Загружаем…"
-              : "Перетащи картинки сюда или нажми, чтобы выбрать"}
+              : "Изображения могут быть перенесены сюда или выбраны нажатием"}
           </span>
           <input
             ref={fileInput}

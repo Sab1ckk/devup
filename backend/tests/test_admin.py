@@ -207,3 +207,24 @@ def test_review_moderation_hides_drafts_and_deletes_published_reviews(client, is
     assert client.request('DELETE', path + '/' + review_id, json={}, headers=HEAD).status_code == 200
     assert client.get('/api/reviews').json() == []
     assert len(client.get(path).json()['items']) == 1
+
+
+def test_personal_reviews_are_private_and_include_all_statuses(client, isolated_db):
+    from test_flows import auth
+
+    guest_client = TestClient(app)
+    assert guest_client.get('/api/reviews/mine').status_code == 401
+    auth(client, isolated_db)
+    response = post(client, '/reviews', {'author_name':'Анна', 'rating':5,
+                    'service_code':'site', 'body':'Мой отзыв'})
+    assert response.status_code == 201
+    mine = client.get('/api/reviews/mine').json()
+    assert len(mine) == 1 and mine[0]['status'] == 'pending'
+    assert guest_client.get('/api/reviews').json() == []
+    admin_login(guest_client, isolated_db)
+    assert guest_client.get('/api/reviews/mine').status_code == 401
+    moderation = '/api/admin/reviews/' + mine[0]['id'] + '/status'
+    for status in ('published', 'rejected'):
+        assert guest_client.put(moderation, json={'status':status}, headers=HEAD).status_code == 200
+        assert client.get('/api/reviews/mine').json()[0]['status'] == status
+        assert bool(guest_client.get('/api/reviews').json()) == (status == 'published')
