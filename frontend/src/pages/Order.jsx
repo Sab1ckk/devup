@@ -295,9 +295,6 @@ export default function Order() {
                   disabled={busy}
                 >
                   {busy ? "Отправляем…" : "Оставить заявку"}{" "}
-                  <svg className="icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M6 18 18 6M6 6h12v12" />
-                  </svg>
                 </button>
               </div>
             </div>
