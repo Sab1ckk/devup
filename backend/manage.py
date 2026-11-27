@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from app.db import SessionLocal
 from app.models import ProjectRequest,RequestStatusHistory,STATUSES
 from app.cleanup import cleanup
-from app.admin_cli import create_manager,reset_manager_password
+from app.admin_cli import create_manager,reset_manager_password,reset_user_password
 
 def main():
     parser=argparse.ArgumentParser();commands=parser.add_subparsers(dest='command',required=True)
@@ -12,6 +12,7 @@ def main():
     commands.add_parser('cleanup')
     manager=commands.add_parser('create-manager');manager.add_argument('username');manager.add_argument('email')
     reset=commands.add_parser('reset-manager-password');reset.add_argument('username')
+    reset_user=commands.add_parser('reset-user-password');reset_user.add_argument('email')
     args=parser.parse_args()
     try:
         if args.command=='cleanup':cleanup()
@@ -19,6 +20,9 @@ def main():
             password=getpass.getpass('Пароль менеджера (от 8 символов): ')
             if args.command=='create-manager':create_manager(args.username,args.email,password)
             else:reset_manager_password(args.username,password)
+        elif args.command=='reset-user-password':
+            password = getpass.getpass('Новый пароль пользователя (от 8 символов): ')
+            reset_user_password(args.email, password)
         else:
             with SessionLocal.begin() as db:
                 p=db.scalar(select(ProjectRequest).where(ProjectRequest.number==args.number).with_for_update())

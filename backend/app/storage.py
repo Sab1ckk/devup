@@ -46,13 +46,32 @@ def process_image(data):
                 if image.width>cfg.max_image_side or image.height>cfg.max_image_side:fail(400,'upload_dimensions','Слишком большая картинка. Максимум 8000 × 8000.','file')
                 image.verify()
             with Image.open(BytesIO(data)) as original:
-                image=ImageOps.exif_transpose(original)
-                image=image.convert('RGBA' if 'A' in image.getbands() or 'transparency' in image.info else 'RGB')
-                image.thumbnail((1600,1600),Image.Resampling.LANCZOS)
-                clean=Image.new(image.mode,image.size);clean.paste(image)
-                full=BytesIO();clean.save(full,format='WEBP',quality=85)
-                thumb=clean.copy();thumb.thumbnail((640,1600),Image.Resampling.LANCZOS)
-                thumbnail=BytesIO();thumb.save(thumbnail,format='WEBP',quality=80)
+                image = ImageOps.exif_transpose(original)
+                image = image.convert('RGBA')
+
+                target_size = (1600, 1600)
+                image.thumbnail(
+                    target_size,
+                    Image.Resampling.LANCZOS
+                )
+                clean = Image.new(
+                    'RGBA',
+                    target_size,
+                    (0, 0, 0, 0)
+                )
+                x = (target_size[0] - image.width) // 2
+                y = (target_size[1] - image.height) // 2
+
+                clean.paste(image, (x, y), image)
+                full = BytesIO()
+                clean.save(full, format='WEBP', quality=85)
+                thumb = clean.copy()
+                thumb.thumbnail(
+                    (640, 640),
+                    Image.Resampling.LANCZOS
+                )
+                thumbnail = BytesIO()
+                thumb.save(thumbnail, format='WEBP', quality=80)
                 value=full.getvalue();name=uuid4().hex
                 return {'key_full':name+'.webp','key_thumb':name+'-thumb.webp','mime':'image/webp','width':clean.width,'height':clean.height,'size_bytes':len(value),'sha256':hashlib.sha256(value).hexdigest()},value,thumbnail.getvalue()
     except (UnidentifiedImageError,OSError,ValueError,Image.DecompressionBombError,Image.DecompressionBombWarning):

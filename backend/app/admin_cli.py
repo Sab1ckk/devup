@@ -29,3 +29,33 @@ def reset_manager_password(username,password):
         user.password_hash=passwords.hash(password)
         db.execute(update(ServerSession).where(ServerSession.user_id==user.id).values(revoked_at=now()))
         db.execute(update(AuthChallenge).where(AuthChallenge.user_id==user.id).values(consumed_at=now()))
+
+def validate_password(password: str) -> None:
+    if len(password) < 8 or len(password) > 128:
+        raise ValueError('Пароль: от 8 до 128 символов')
+
+
+def reset_user_password(email: str, password: str) -> None:
+    email = str(TypeAdapter(EmailStr).validate_python(email.strip())).lower()
+    validate_password(password)
+
+    with SessionLocal.begin() as db:
+        user = db.scalar(
+            select(User)
+            .where(User.email == email)
+            .with_for_update()
+        )
+        if not user:
+            raise ValueError('Пользователь не найден')
+
+        user.password_hash = passwords.hash(password)
+        db.execute(
+            update(ServerSession)
+            .where(ServerSession.user_id == user.id, ServerSession.revoked_at.is_(None))
+            .values(revoked_at=now())
+        )
+        db.execute(
+            update(AuthChallenge)
+            .where(AuthChallenge.user_id == user.id, AuthChallenge.consumed_at.is_(None))
+            .values(consumed_at=now())
+        )
